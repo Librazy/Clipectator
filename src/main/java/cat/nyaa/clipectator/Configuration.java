@@ -23,27 +23,35 @@ public class Configuration extends PluginConfigure {
     public boolean enable = true;
 
     @Serializable
+    //自动自动变成观察者
     public boolean autoRespawnToSpectator = false;
 
     @Serializable
+    //自动成盒
     public boolean saveInventory = false;
 
     @Serializable
+    //允许受限玩家出圈
     public boolean allowBeyondBorder = true;
 
     @Serializable
+    //OP也会受限
     public boolean includeOp = false;
 
     @Serializable
+    //允许使用观察者的TP
     public boolean allowTeleport = true;
 
     @Serializable
+    //允许穿过所有透明方块
     public boolean allowAllTransparent = false;
 
     @Serializable
+    //忽略玩家
     public List<UUID> ignoredPlayer = new ArrayList<>();
 
     @Serializable
+    //允许穿过的方块
     public List<String> allowedBlock = Stream.of(Material.AIR, Material.WATER, Material.LAVA, Material.STATIONARY_WATER, Material.STATIONARY_LAVA).map(Material::name).collect(Collectors.toList());
 
     public Configuration(Main plugin) {

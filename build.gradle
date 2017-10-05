@@ -36,6 +36,10 @@ dependencies {
     compile 'org.librazy:NyaaUtilsLangChecker:1.0-SNAPSHOT'
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 String nyaaCoreLangDir = System.getenv("NYAACORE_LANG_DIR")
 
 compileJava {

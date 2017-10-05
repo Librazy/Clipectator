@@ -139,25 +139,27 @@ public class SpectatorListener implements Listener {
                     && !plugin.config.ignoredPlayer.contains(p.getUniqueId())) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 p.setGameMode(GameMode.SPECTATOR);
-                p.spigot().respawn();
                 Location loc = l.clone().add(0, 1, 0);
                 if (isSafe(loc)) {
                     p.teleport(loc);
+                    p.spigot().respawn();
                     return;
                 }
                 loc = lastSafe.getIfPresent(p.getUniqueId());
                 if (loc != null && isSafe(loc)) {
                     p.teleport(loc);
+                    p.spigot().respawn();
                     return;
                 }
                 loc = l.getWorld().getHighestBlockAt(p.getLocation()).getLocation().add(0, 0, 2);
                 if (isSafe(loc)) {
                     p.teleport(loc);
+                    p.spigot().respawn();
                     return;
                 }
                 loc = p.getWorld().getSpawnLocation();
                 p.teleport(loc);
-
+                p.spigot().respawn();
             }, 1);
         }
     }
