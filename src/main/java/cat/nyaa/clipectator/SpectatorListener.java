@@ -94,7 +94,7 @@ public class SpectatorListener implements Listener {
         Location l8 = l.clone().add(-0.3, 1.8, -0.3);
         List<Location> bounding = Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8);
         return bounding.stream().unordered().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
-                       && (plugin.config.allowBeyondBorder || isOutsideBorder(l));
+                       && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
     }
 
     private boolean blockSafe(Material s) {
@@ -103,9 +103,11 @@ public class SpectatorListener implements Listener {
 
     private boolean isOutsideBorder(Location l) {
         WorldBorder border = l.getWorld().getWorldBorder();
-        double radius = border.getSize() / 2;
-        Location center = border.getCenter();
-        return center.distanceSquared(l) >= (radius * radius);
+        l = l.subtract(border.getCenter());
+        double x = Math.abs(l.getX());
+        double z = Math.abs(l.getZ());
+        double size = border.getSize() / 2;
+        return x > size || z > size;
     }
 
     private void msg(Player target, @LangKey String template) {
