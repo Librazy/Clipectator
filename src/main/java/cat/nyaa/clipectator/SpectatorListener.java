@@ -2,15 +2,13 @@ package cat.nyaa.clipectator;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.librazy.nyaautils_lang_checker.LangKey;
@@ -72,6 +70,23 @@ public class SpectatorListener implements Listener {
                 e.setCancelled(true);
                 msg(p, "user.teleport.fail");
             }
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void OnPlayerDeath(PlayerDeathEvent e) {
+        if(!plugin.config.autoRespawnToSpectator || !plugin.config.enable) return;
+        Location l = e.getEntity().getLocation();
+        Player p = e.getEntity();
+        if ((!p.isOp() || plugin.config.includeOp)
+                    && !plugin.config.ignoredPlayer.contains(p.getUniqueId())
+                    && !p.hasPermission("clipectator.ignore")) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                p.spigot().respawn();
+                p.teleport(l);
+                p.setGameMode(GameMode.SPECTATOR);
+            }, 1);
         }
     }
 

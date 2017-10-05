@@ -48,4 +48,10 @@ public class CommandHandler extends CommandReceiver {
         plugin.config.allowedBlock.remove(m.name());
         plugin.config.save();
     }
+
+    @SubCommand(value = "autorespawn", permission = "clipectator.admin")
+    public void commandAutoRespawn(CommandSender sender, Arguments args) {
+        plugin.config.autoRespawnToSpectator = args.nextBoolean();
+        plugin.config.save();
+    }
 }

@@ -18,8 +18,12 @@ public class Configuration extends PluginConfigure {
 
     @Serializable
     public String language = "en_US";
+
     @Serializable
     public boolean enable = true;
+
+    @Serializable
+    public boolean autoRespawnToSpectator = false;
 
     @Serializable
     public boolean allowBeyondBorder = true;
