@@ -2,7 +2,7 @@ user:
   move:
     fail: You are not allowed to pass through it!
     teleport_safe: You are not allowed to pass through it!
-    teleport_surface: You are not allowed to pass through it!
+    teleport_worldspawn: You are not allowed to pass through it!
   teleport:
     fail: You are not allowed to teleport!
 

@@ -37,7 +37,7 @@ public class SpectatorListener implements Listener {
         this.plugin = pl;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerMove(PlayerMoveEvent e) throws ExecutionException {
         Player p = e.getPlayer();
         if (checkPlayer(p)) {
@@ -50,14 +50,14 @@ public class SpectatorListener implements Listener {
                     msg(p, "user.move.fail");
                     e.setCancelled(true);
                 } else {
-                    Location safe = lastSafe.get(p.getUniqueId(), p::getBedSpawnLocation);
+                    Location safe = lastSafe.get(p.getUniqueId(), ()-> p.getLocation().getWorld().getHighestBlockAt(p.getLocation()).getLocation().add(0, 0, 2));
                     if (isSafe(safe)) {
                         msg(p, "user.move.teleport_safe");
                         p.teleport(safe);
                     } else {
-                        Location surface = p.getLocation().getWorld().getHighestBlockAt(p.getLocation()).getLocation().add(0, 0, 2);
-                        p.teleport(surface);
-                        msg(p, "user.move.teleport_surface");
+                        Location spawn = p.getWorld().getSpawnLocation();
+                        p.teleport(spawn);
+                        msg(p, "user.move.teleport_worldspawn");
                     }
                 }
             }
@@ -93,8 +93,12 @@ public class SpectatorListener implements Listener {
         Location l7 = l.clone().add(-0.3, 1.8, 0.3);
         Location l8 = l.clone().add(-0.3, 1.8, -0.3);
         List<Location> bounding = Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8);
-        return bounding.stream().map(Location::getBlock).map(Block::getType).map(Material::name).allMatch(plugin.config.allowedBlock::contains)
+        return bounding.stream().unordered().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
                        && (plugin.config.allowBeyondBorder || isOutsideBorder(l));
+    }
+
+    private boolean blockSafe(Material s) {
+        return (s.isTransparent() && plugin.config.allowAllTransparent) || plugin.config.allowedBlock.contains(s.name());
     }
 
     private boolean isOutsideBorder(Location l) {

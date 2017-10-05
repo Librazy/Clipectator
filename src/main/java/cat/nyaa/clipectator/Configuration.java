@@ -31,6 +31,9 @@ public class Configuration extends PluginConfigure {
     public boolean allowTeleport = true;
 
     @Serializable
+    public boolean allowAllTransparent = false;
+
+    @Serializable
     public List<UUID> ignoredPlayer = new ArrayList<>();
 
     @Serializable
