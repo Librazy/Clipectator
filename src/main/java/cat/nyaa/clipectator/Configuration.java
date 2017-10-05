@@ -26,6 +26,9 @@ public class Configuration extends PluginConfigure {
     public boolean autoRespawnToSpectator = false;
 
     @Serializable
+    public boolean saveInventory = false;
+
+    @Serializable
     public boolean allowBeyondBorder = true;
 
     @Serializable

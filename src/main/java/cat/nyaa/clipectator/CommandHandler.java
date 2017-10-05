@@ -6,7 +6,7 @@ import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
-public class CommandHandler extends CommandReceiver<Main> {
+public class CommandHandler extends CommandReceiver {
     private final Main plugin;
 
     public CommandHandler(Main plugin, LanguageRepository i18n) {
@@ -52,6 +52,12 @@ public class CommandHandler extends CommandReceiver<Main> {
     @SubCommand(value = "autorespawn", permission = "clipectator.admin")
     public void commandAutoRespawn(CommandSender sender, Arguments args) {
         plugin.config.autoRespawnToSpectator = args.nextBoolean();
+        plugin.config.save();
+    }
+
+    @SubCommand(value = "saveinventory", permission = "clipectator.admin")
+    public void commandSaveInventory(CommandSender sender, Arguments args) {
+        plugin.config.saveInventory = args.nextBoolean();
         plugin.config.save();
     }
 }

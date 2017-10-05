@@ -32,7 +32,7 @@ branches:
   - "/^*-v[0-9]/"
 env:
   global:
-    - main_version=0
+    - main_version=1
     - archivesBaseName=Clipectator
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
