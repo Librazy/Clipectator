@@ -1,0 +1,10 @@
+name: Clipectator
+version: 1.0
+main: cat.nyaa.clipectatortor.Main
+depend: [NyaaCore]
+authors: [Librazy]
+commands:
+  clipectator:
+permissions:
+  clipectator.admin:
+    default: op

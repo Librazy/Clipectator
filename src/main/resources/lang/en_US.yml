@@ -1,0 +1,31 @@
+user:
+  move:
+    fail: You are not allowed to pass through it!
+    teleport_safe: You are not allowed to pass through it!
+    teleport_surface: You are not allowed to pass through it!
+  teleport:
+    fail: You are not allowed to teleport!
+
+manual:
+  no_description: "No description"
+  no_usage: "No usage"
+
+  help:
+    description: "Show help message"
+    usage: "/clipectator [subCommands...] help"
+
+  allow:
+    description: "Allow some material to be passed"
+    usage: "/clipectator allow MATERIAL"
+
+  disallow:
+    description: "Disallow some material from being passed"
+    usage: "/clipectator disallow MATERIAL"
+
+  enable:
+    description: "Enable"
+    usage: "/clipectator enable"
+
+  disable:
+    description: "Disable"
+    usage: "/clipectator disable"
