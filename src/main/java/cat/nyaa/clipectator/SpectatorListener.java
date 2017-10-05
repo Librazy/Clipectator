@@ -136,8 +136,7 @@ public class SpectatorListener implements Listener {
 
         if (plugin.config.autoRespawnToSpectator
                     && (!p.isOp() || plugin.config.includeOp)
-                    && !plugin.config.ignoredPlayer.contains(p.getUniqueId())
-                    && !p.hasPermission("clipectator.ignore")) {
+                    && !plugin.config.ignoredPlayer.contains(p.getUniqueId())) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 p.setGameMode(GameMode.SPECTATOR);
                 p.spigot().respawn();
@@ -167,8 +166,7 @@ public class SpectatorListener implements Listener {
         return plugin.config.enable
                        && p.getGameMode() == GameMode.SPECTATOR
                        && (!p.isOp() || plugin.config.includeOp)
-                       && !plugin.config.ignoredPlayer.contains(p.getUniqueId())
-                       && !p.hasPermission("clipectator.ignore");
+                       && !plugin.config.ignoredPlayer.contains(p.getUniqueId());
     }
 
     private boolean isSafe(Location l) {
