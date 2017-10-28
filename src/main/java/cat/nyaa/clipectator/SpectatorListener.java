@@ -1,5 +1,6 @@
 package cat.nyaa.clipectator;
 
+import cat.nyaa.nyaacore.Message;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.*;
@@ -10,10 +11,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.librazy.nyaautils_lang_checker.LangKey;
 
 import java.text.SimpleDateFormat;
@@ -35,9 +39,29 @@ public class SpectatorListener implements Listener {
                                                         .expireAfterWrite(2, TimeUnit.SECONDS)
                                                         .build();
 
+    private Cache<UUID, Long> alivePlayers = CacheBuilder.newBuilder()
+                                                         .expireAfterWrite(60, TimeUnit.MINUTES) // emm好像这个expire没什么用
+                                                         .build();
+
     SpectatorListener(Main pl) {
         pl.getServer().getPluginManager().registerEvents(this, pl);
         this.plugin = pl;
+    }
+
+    void RememberAlive() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!plugin.spectateOnLogin) {
+                    this.cancel();
+                }
+                Bukkit.getServer().getOnlinePlayers().forEach(p -> {
+                    if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
+                        alivePlayers.put(p.getUniqueId(), System.currentTimeMillis());
+                    }
+                });
+            }
+        }.runTaskTimer(plugin, 0, 60 * 20);
     }
 
     private static Material getChestType(Block block) {
@@ -56,9 +80,42 @@ public class SpectatorListener implements Listener {
         return material;
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void OnPlayerQuit(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
+            alivePlayers.put(p.getUniqueId(), System.currentTimeMillis());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void OnPlayerJoin(PlayerJoinEvent e) {
+        if(!plugin.spectateOnLogin) return;
+        Player p = e.getPlayer();
+        if(plugin.config.enable
+                   && (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+                   && (!p.isOp() || plugin.config.includeOp)
+                   && !plugin.config.ignoredPlayer.contains(p.getUniqueId())){
+            Long last = alivePlayers.getIfPresent(p.getUniqueId());
+            if(last == null){
+                p.setGameMode(GameMode.SPECTATOR);
+                msg(p, "user.offline.spec");
+            } else {
+                long delta = System.currentTimeMillis() - last;
+                if(delta / 50 > plugin.config.maxOfflineTick){
+                    new Message(I18n.format("user.offline.kill", p.getDisplayName())).broadcast(p.getWorld());
+                    p.setHealth(0);
+                } else {
+                    alivePlayers.put(p.getUniqueId(), System.currentTimeMillis());
+                }
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerMove(PlayerMoveEvent e) throws ExecutionException {
         Player p = e.getPlayer();
+        p.setSneaking(false);
         if (checkPlayer(p)) {
             Location to = e.getTo();
             if (isSafe(to)) {
@@ -123,7 +180,6 @@ public class SpectatorListener implements Listener {
         if (!(plugin.config.autoRespawnToSpectator || plugin.config.saveInventory) || !plugin.config.enable) return;
         Location l = e.getEntity().getLocation();
         Player p = e.getEntity();
-        p.setSneaking(false);
         if (plugin.config.saveInventory
                     && e.getDrops() != null
                     && !e.getDrops().isEmpty()
@@ -160,6 +216,7 @@ public class SpectatorListener implements Listener {
         if (plugin.config.autoRespawnToSpectator
                     && (!p.isOp() || plugin.config.includeOp)
                     && !plugin.config.ignoredPlayer.contains(p.getUniqueId())) {
+            alivePlayers.invalidate(p.getUniqueId());
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 p.setGameMode(GameMode.SPECTATOR);
                 Location loc = l.clone().add(0, 1, 0);
@@ -207,7 +264,7 @@ public class SpectatorListener implements Listener {
         Location l8 = l.clone().add(-0.3, 1.8, -0.3);
         List<Location> bounding = Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8);
         return bounding.stream().unordered().parallel().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
-                              && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
+                       && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
     }
 
     private boolean blockSafe(Material s) {

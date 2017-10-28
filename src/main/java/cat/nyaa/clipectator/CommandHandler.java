@@ -110,6 +110,7 @@ public class CommandHandler extends CommandReceiver {
             msg(sender, "admin.includeop.state", plugin.config.includeOp);
         }
     }
+
     @SubCommand(value = "saveinventory", permission = "clipectator.admin")
     public void commandSaveInventory(CommandSender sender, Arguments args) {
         try{
@@ -118,6 +119,30 @@ public class CommandHandler extends CommandReceiver {
             plugin.config.save();
         }catch (BadCommandException ignore){
             msg(sender, "admin.saveinventory.state", plugin.config.saveInventory);
+        }
+    }
+
+    @SubCommand(value = "maxofflinetick", permission = "clipectator.admin")
+    public void commandMaxOfflineTick(CommandSender sender, Arguments args) {
+        try{
+            plugin.config.maxOfflineTick = args.nextInt();
+            msg(sender, "admin.maxofflinetick.set", plugin.config.maxOfflineTick);
+            plugin.config.save();
+        }catch (BadCommandException ignore){
+            msg(sender, "admin.maxofflinetick.state", plugin.config.maxOfflineTick);
+        }
+    }
+
+    @SubCommand(value = "spectateonlogin", permission = "clipectator.admin")
+    public void commandSpectateOnLogin(CommandSender sender, Arguments args) {
+        try{
+            plugin.spectateOnLogin = args.nextBoolean();
+            msg(sender, "admin.spectateonlogin.set", plugin.spectateOnLogin);
+            if(plugin.spectateOnLogin){
+                plugin.specListener.RememberAlive();
+            }
+        }catch (BadCommandException ignore){
+            msg(sender, "admin.spectateonlogin.state", plugin.spectateOnLogin);
         }
     }
 

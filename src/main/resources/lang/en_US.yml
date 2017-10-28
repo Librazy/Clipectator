@@ -8,7 +8,9 @@ user:
   chest:
     name: "&1%s %s"
     date_format: "yyyy-MM-dd HH:mm:ss"
-
+  offline:
+    kill: "%s lost synchronization with world"
+    spec: "you can only spectating now"
 manual:
   no_description: "No description"
   no_usage: "No usage"
@@ -63,6 +65,12 @@ admin:
     list: "allowedBlock: %s, allowAllTransparent: %b"
     added: "added: %s"
     removed: "removed: %s"
+  spectateonlogin:
+    state: "spectateOnLogin: %b"
+    set: "spectateOnLogin = %b"
+  maxofflinetick:
+    state: "maxOfflineTick: %d"
+    set: "maxOfflineTick = %d"
 manual:
   license: |
     Clipectator version %s

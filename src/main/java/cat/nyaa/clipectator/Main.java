@@ -10,6 +10,8 @@ public final class Main extends JavaPlugin {
     public CommandHandler commandHandler;
     public SpectatorListener specListener;
 
+    boolean spectateOnLogin = false;
+
     @Override
     public void onEnable() {
         config = new Configuration(this);

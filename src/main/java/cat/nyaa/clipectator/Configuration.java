@@ -47,6 +47,10 @@ public class Configuration extends PluginConfigure {
     public boolean allowAllTransparent = true;
 
     @Serializable
+    //最大允许下线时间
+    public long maxOfflineTick = 3 * 60 *20;
+
+    @Serializable
     //忽略玩家
     public List<UUID> ignoredPlayer = new ArrayList<>();
 
