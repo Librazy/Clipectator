@@ -60,13 +60,13 @@ public class SpectatorListener implements Listener {
     public void OnPlayerMove(PlayerMoveEvent e) throws ExecutionException {
         Player p = e.getPlayer();
         if (checkPlayer(p)) {
-            Location from = e.getFrom();
             Location to = e.getTo();
-            Location delta = to.clone().subtract(from);
             if (isSafe(to)) {
                 lastSafe.get(p.getUniqueId(), () -> to);
                 return;
             }
+            Location from = e.getFrom();
+            Location delta = to.clone().subtract(from);
             Location mx = delta.clone();
             mx.setX(0);
             mx.add(from);
@@ -206,9 +206,8 @@ public class SpectatorListener implements Listener {
         Location l7 = l.clone().add(-0.3, 1.8, 0.3);
         Location l8 = l.clone().add(-0.3, 1.8, -0.3);
         List<Location> bounding = Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8);
-        Boolean ans = bounding.stream().unordered().parallel().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
+        return bounding.stream().unordered().parallel().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
                               && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
-        return ans;
     }
 
     private boolean blockSafe(Material s) {
