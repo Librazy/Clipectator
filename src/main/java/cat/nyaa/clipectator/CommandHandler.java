@@ -120,4 +120,10 @@ public class CommandHandler extends CommandReceiver {
             msg(sender, "admin.saveinventory.state", plugin.config.saveInventory);
         }
     }
+
+    @SubCommand(value = "version")
+    public void version(CommandSender sender, Arguments args) {
+        String ver = plugin.getDescription().getVersion();
+        msg(sender, "manual.license", ver, plugin.getDescription().getAuthors().stream().reduce((a, b) -> a + ", " +b));
+    }
 }
