@@ -36,3 +36,30 @@ manual:
   autorespawn:
     description: "Set auto respawn"
     usage: "/clipectator autorespawn true|false"
+
+admin:
+  saveinventory:
+    state: "allowAllTransparent: %b"
+    set: "allowAllTransparent = %b"
+  autorespawn:
+    state: "autoRespawnToSpectator: %b"
+    set: "autoRespawnToSpectator = %b"
+  saveinventory:
+    state: "saveInventory: %b"
+    set: "saveInventory = %b"
+  allowteleport:
+    state: "allowTeleport: %b"
+    set: "allowTeleport = %b"
+  allowbeyondborder:
+    state: "allowBeyondBorder: %b"
+    set: "allowBeyondBorder = %b"
+  includeop:
+    state: "includeOp: %b"
+    set: "includeOp = %b"
+  allowalltransparent:
+    state: "allowAllTransparent: %b"
+    set: "allowAllTransparent = %b"
+  allowedblock:
+    list: "allowedBlock: %s, allowAllTransparent: %b"
+    added: "added: %s"
+    removed: "removed: %s"

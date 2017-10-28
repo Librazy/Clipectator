@@ -97,7 +97,7 @@ public class SpectatorListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void OnPlayerDeath(PlayerDeathEvent e) {
-        if (!plugin.config.autoRespawnToSpectator || !plugin.config.saveInventory || !plugin.config.enable) return;
+        if (!(plugin.config.autoRespawnToSpectator || plugin.config.saveInventory) || !plugin.config.enable) return;
         Location l = e.getEntity().getLocation();
         Player p = e.getEntity();
 
@@ -141,27 +141,29 @@ public class SpectatorListener implements Listener {
                 p.setGameMode(GameMode.SPECTATOR);
                 Location loc = l.clone().add(0, 1, 0);
                 if (isSafe(loc)) {
-                    p.teleport(loc);
-                    p.spigot().respawn();
+                    forceRespawn(p, loc);
                     return;
                 }
                 loc = lastSafe.getIfPresent(p.getUniqueId());
                 if (loc != null && isSafe(loc)) {
-                    p.teleport(loc);
-                    p.spigot().respawn();
+                    forceRespawn(p, loc);
                     return;
                 }
                 loc = l.getWorld().getHighestBlockAt(p.getLocation()).getLocation().add(0, 0, 2);
                 if (isSafe(loc)) {
-                    p.teleport(loc);
-                    p.spigot().respawn();
+                    forceRespawn(p, loc);
                     return;
                 }
                 loc = p.getWorld().getSpawnLocation();
-                p.teleport(loc);
-                p.spigot().respawn();
+                forceRespawn(p, loc);
             }, 1);
         }
+    }
+
+    private void forceRespawn(Player p, Location loc) {
+        p.teleport(loc);
+        p.spigot().respawn();
+        p.teleport(loc);
     }
 
     private boolean checkPlayer(Player p) {

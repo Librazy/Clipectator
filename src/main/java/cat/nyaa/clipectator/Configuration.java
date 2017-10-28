@@ -44,7 +44,7 @@ public class Configuration extends PluginConfigure {
 
     @Serializable
     //允许穿过所有透明方块
-    public boolean allowAllTransparent = false;
+    public boolean allowAllTransparent = true;
 
     @Serializable
     //忽略玩家
@@ -52,7 +52,7 @@ public class Configuration extends PluginConfigure {
 
     @Serializable
     //允许穿过的方块
-    public List<String> allowedBlock = Stream.of(Material.AIR, Material.WATER, Material.LAVA, Material.STATIONARY_WATER, Material.STATIONARY_LAVA).map(Material::name).collect(Collectors.toList());
+    public List<String> allowedBlock = Stream.of(Material.AIR, Material.WATER, Material.LAVA, Material.STATIONARY_WATER, Material.STATIONARY_LAVA, Material.LEAVES, Material.LEAVES_2).map(Material::name).collect(Collectors.toList());
 
     public Configuration(Main plugin) {
         this.plugin = plugin;
