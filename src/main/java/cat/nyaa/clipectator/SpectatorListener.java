@@ -62,8 +62,31 @@ public class SpectatorListener implements Listener {
         if (checkPlayer(p)) {
             Location from = e.getFrom();
             Location to = e.getTo();
+            Location delta = to.clone().subtract(from);
             if (isSafe(to)) {
                 lastSafe.get(p.getUniqueId(), () -> to);
+                return;
+            }
+            Location mx = delta.clone();
+            mx.setX(0);
+            mx.add(from);
+            e.setTo(mx);
+            if (isSafe(mx)) {
+                e.setTo(mx);
+                return;
+            }
+            Location my = delta.clone();
+            my.setY(0);
+            my.add(from);
+            if (isSafe(my)) {
+                e.setTo(my);
+                return;
+            }
+            Location mz = delta.clone();
+            mz.setZ(0);
+            mz.add(from);
+            if (isSafe(mz)) {
+                e.setTo(mz);
                 return;
             }
             if (isSafe(from)) {
@@ -100,7 +123,7 @@ public class SpectatorListener implements Listener {
         if (!(plugin.config.autoRespawnToSpectator || plugin.config.saveInventory) || !plugin.config.enable) return;
         Location l = e.getEntity().getLocation();
         Player p = e.getEntity();
-
+        p.setSneaking(false);
         if (plugin.config.saveInventory
                     && e.getDrops() != null
                     && !e.getDrops().isEmpty()
@@ -183,8 +206,9 @@ public class SpectatorListener implements Listener {
         Location l7 = l.clone().add(-0.3, 1.8, 0.3);
         Location l8 = l.clone().add(-0.3, 1.8, -0.3);
         List<Location> bounding = Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8);
-        return bounding.stream().unordered().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
-                       && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
+        Boolean ans = bounding.stream().unordered().parallel().map(Location::getBlock).distinct().map(Block::getType).allMatch(this::blockSafe)
+                              && (plugin.config.allowBeyondBorder || !isOutsideBorder(l));
+        return ans;
     }
 
     private boolean blockSafe(Material s) {
